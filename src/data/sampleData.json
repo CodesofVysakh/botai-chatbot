@@ -248,5 +248,25 @@
 		"id": 50,
 		"question": "How do you stay updated with the latest technology trends?",
 		"response": "Staying updated involves following industry news, participating in developer communities, attending conferences and workshops, taking online courses, reading technical blogs and publications, and experimenting with new technologies and tools."
+	},
+	{
+		"id": 51,
+		"question": "Hi, what is the weather",
+		"response": "I can’t fetch live weather yet, but I can help you check quickly if you share your city and preferred weather provider."
+	},
+	{
+		"id": 52,
+		"question": "Hi, what is my location",
+		"response": "I don’t have access to your precise location by default. If you share your city or allow browser location in a backend integration, I can personalize responses."
+	},
+	{
+		"id": 53,
+		"question": "Hi, what is the temperature",
+		"response": "I can’t read real-time temperature in this demo mode, but I can provide guidance based on your city once weather API integration is enabled."
+	},
+	{
+		"id": 54,
+		"question": "Hi, how are you",
+		"response": "I’m doing great and ready to help! Ask me anything about coding, debugging, architecture, or your app."
 	}
 ]

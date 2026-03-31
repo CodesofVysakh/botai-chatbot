@@ -37,7 +37,7 @@ export default function FeedbackModal({
 
         updateChat((prev) =>
             prev.map((item) => {
-                if (item.id == chatId) {
+                if (item.id === chatId) {
                     return { ...item, feedback: input };
                 } else {
                     return { ...item };

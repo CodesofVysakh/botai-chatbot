@@ -23,7 +23,11 @@ export default function ChatHistoryCard({ details }) {
 
             <Stack spacing={{ xs: 2, md: 3 }}>
                 {details.chat.map((item, index) => (
-                    <ChattingCard details={item} readOnly={true} key={index} />
+                    <ChattingCard
+                        details={item}
+                        readOnly={true}
+                        key={item.id || `${details.datetime}-${index}`}
+                    />
                 ))}
             </Stack>
         </Box>

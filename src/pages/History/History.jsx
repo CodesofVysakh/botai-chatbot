@@ -1,4 +1,4 @@
-import { Typography, Box, Stack, Divider, Select, MenuItem } from '@mui/material'
+import { Typography, Box, Stack, Divider } from '@mui/material'
 import { useEffect, useState } from 'react'
 import ChatHistoryCard from '../../components/ChatHistoryCard/ChatHistoryCard'
 import ChatFilter from '../../components/ChatFilter/ChatFilter'
@@ -10,10 +10,21 @@ export default function History() {
     const [filteredChats, setFilteredChats] = useState([])
 
     useEffect(() => {
-        const localChats = localStorage.getItem('chat') || []
-        if (localChats.length > 0) {
-            setChats(JSON.parse(localChats))
-            setFilteredChats(JSON.parse(localChats))
+        const localChats = localStorage.getItem('chat')
+
+        if (!localChats) {
+            return
+        }
+
+        try {
+            const parsed = JSON.parse(localChats)
+            if (Array.isArray(parsed)) {
+                setChats(parsed)
+                setFilteredChats(parsed)
+            }
+        } catch (error) {
+            setChats([])
+            setFilteredChats([])
         }
     }, [])
 
@@ -46,7 +57,7 @@ export default function History() {
 
                 {chats.length > 0 && <ChatFilter allChats={chats} filterChats={setFilteredChats} />}
 
-                {chats.length == 0 && (
+                {chats.length === 0 && (
                     <Typography
                         textAlign={'center'}
                         p={3}
@@ -57,7 +68,7 @@ export default function History() {
                     </Typography>
                 )}
 
-                {chats.length > 0 && filteredChats.length == 0 && (
+                {chats.length > 0 && filteredChats.length === 0 && (
                     <Typography
                         textAlign={'center'}
                         p={3}
