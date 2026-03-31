@@ -1,13 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import {
-    TextField,
-    Box,
-    Button,
-    Stack,
-    Snackbar,
-    useMediaQuery,
-} from "@mui/material";
+import { TextField, Box, Button, Stack, Snackbar } from "@mui/material";
 
 export default function ChatInput({
     generateResponse,
@@ -21,6 +14,9 @@ export default function ChatInput({
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!input.trim()) {
+            return;
+        }
         generateResponse(input);
         setInput("");
         setScroll((prev) => !prev);
@@ -33,7 +29,10 @@ export default function ChatInput({
 
         localStorage.setItem(
             "chat",
-            JSON.stringify([{ chat: chat, datetime: date }, ...chat_history])
+            JSON.stringify([
+                { chat: chat, datetime: date.toISOString() },
+                ...chat_history,
+            ])
         );
 
         clearChat();
@@ -83,7 +82,7 @@ export default function ChatInput({
                     <Button
                         variant="outlined"
                         onClick={handleSave}
-                        disabled={!chat.length > 0}
+                        disabled={chat.length === 0}
                         sx={{
                             fontSize: { xs: 12, md: 16 },
                             "@media (max-width:767px)": {

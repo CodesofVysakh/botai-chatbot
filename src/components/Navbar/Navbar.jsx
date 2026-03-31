@@ -40,7 +40,7 @@ export default function Navbar() {
                 <IconButton
                     onClick={() =>
                         setMode((prev) => {
-                            if (prev == "light") {
+                            if (prev === "light") {
                                 return "dark";
                             } else {
                                 return "light";
@@ -48,7 +48,7 @@ export default function Navbar() {
                         })
                     }
                 >
-                    {mode == "light" ? (
+                    {mode === "light" ? (
                         <Brightness4Icon />
                     ) : (
                         <Brightness7Icon />

@@ -9,24 +9,16 @@ export default function ChatFilter({ allChats, filterChats }) {
     };
 
     useEffect(() => {
-        if (option == "All Ratings") {
+        if (option === "All Ratings") {
             filterChats(allChats);
         } else {
-            const filtered = allChats.filter((item) => {
-                let found = false;
-
-                item.chat.forEach((ch) => {
-                    if (ch.rating == option) {
-                        found = true;
-                    }
-                });
-
-                return found;
-            });
+            const filtered = allChats.filter((item) =>
+                item.chat.some((ch) => ch.rating === option)
+            );
 
             filterChats(filtered);
         }
-    }, [option]);
+    }, [allChats, filterChats, option]);
 
     return (
         <Box mb={3}>
