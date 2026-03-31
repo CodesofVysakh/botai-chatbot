@@ -1,51 +1,67 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Box, Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import InitialChat from "../../components/InitialChat/InitialChat";
 import ChatInput from "../../components/ChatInput/ChatInput";
 import ChattingCard from "../../components/ChattingCard/ChattingCard";
 import FeedbackModal from "../../components/FeedbackModal/FeedbackModal";
-import data from "../../data/sampleData.json";
 import Navbar from "../../components/Navbar/Navbar";
 import { ThemeContext } from "../../theme/ThemeContext";
+import { sendMessage } from "../../services/chatService";
 
 export default function Home() {
     const [showModal, setShowModal] = useState(false);
     const listRef = useRef(null);
-    const [chatId, setChatId] = useState(1);
     const [selectedChatId, setSelectedChatId] = useState(null);
     const [scrollToBottom, setScrollToBottom] = useState(false);
     const { chat, setChat } = useOutletContext();
     const { mode } = useContext(ThemeContext);
 
-    const generateResponse = (input) => {
-        const response = data.find(
-            (item) => input.toLowerCase() == item.question.toLowerCase()
-        );
+    const generateResponse = async (input) => {
+        const userId = crypto.randomUUID();
+        const aiId = crypto.randomUUID();
+        const userMessage = {
+            type: "Human",
+            text: input,
+            time: new Date().toISOString(),
+            id: userId,
+        };
+        const aiPlaceholder = {
+            type: "AI",
+            text: "Thinking...",
+            time: new Date().toISOString(),
+            id: aiId,
+        };
 
-        let answer = "Sorry, Did not understand your query!";
+        setChat((prev) => [...prev, userMessage, aiPlaceholder]);
 
-        if (response != undefined) {
-            answer = response.response;
+        try {
+            const messageHistory = [...chat, userMessage].map((item) => ({
+                role: item.type === "Human" ? "user" : "assistant",
+                content: item.text,
+            }));
+
+            const answer = await sendMessage(messageHistory, input);
+
+            setChat((prev) =>
+                prev.map((item) =>
+                    item.id === aiId
+                        ? { ...item, text: answer || "Sorry, no response was returned." }
+                        : item
+                )
+            );
+        } catch (error) {
+            setChat((prev) =>
+                prev.map((item) =>
+                    item.id === aiId
+                        ? {
+                              ...item,
+                              text: "Sorry, I am unable to respond right now. Please try again.",
+                          }
+                        : item
+                )
+            );
         }
-
-        setChat((prev) => [
-            ...prev,
-            {
-                type: "Human",
-                text: input,
-                time: new Date(),
-                id: chatId,
-            },
-            {
-                type: "AI",
-                text: answer,
-                time: new Date(),
-                id: chatId + 1,
-            },
-        ]);
-
-        setChatId((prev) => prev + 2);
     };
 
     useEffect(() => {
@@ -59,7 +75,7 @@ export default function Home() {
             sx={{
                 "@media (max-width:767px)": {
                     background:
-                        mode == "light"
+                        mode === "light"
                             ? "linear-gradient(#F9FAFA 60%, #EDE4FF)"
                             : "",
                 },
@@ -67,7 +83,7 @@ export default function Home() {
         >
             <Navbar />
 
-            {chat.length == 0 && (
+            {chat.length === 0 && (
                 <InitialChat generateResponse={generateResponse} />
             )}
 
@@ -96,7 +112,7 @@ export default function Home() {
                     {chat.map((item, index) => (
                         <ChattingCard
                             details={item}
-                            key={index}
+                            key={item.id || index}
                             updateChat={setChat}
                             setSelectedChatId={setSelectedChatId}
                             showFeedbackModal={() => setShowModal(true)}

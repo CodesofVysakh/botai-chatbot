@@ -6,6 +6,7 @@ import { Box, Stack, Typography, IconButton, Rating } from "@mui/material";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
+import { toValidDate } from "../../utils/date";
 
 export default function ChattingCard({
     details,
@@ -21,7 +22,7 @@ export default function ChattingCard({
         if (isRating) {
             updateChat((prev) =>
                 prev.map((item) => {
-                    if (item.id == details.id) {
+                    if (item.id === details.id) {
                         return { ...item, rating: rating || 0 };
                     } else {
                         return { ...item };
@@ -29,7 +30,9 @@ export default function ChattingCard({
                 })
             );
         }
-    }, [rating]);
+    }, [rating, details.id, isRating, updateChat]);
+
+    const messageDate = toValidDate(details.time);
 
     return (
         <Stack
@@ -48,7 +51,7 @@ export default function ChattingCard({
         >
             <Box
                 component={"img"}
-                src={details.type == "AI" ? ai : human}
+                src={details.type === "AI" ? ai : human}
                 height={{ xs: 30, md: 68 }}
                 width={{ xs: 30, md: 68 }}
                 borderRadius={"50%"}
@@ -61,7 +64,7 @@ export default function ChattingCard({
                     fontWeight={700}
                     fontSize={{ xs: 14, md: 16 }}
                 >
-                    {details.type == "AI" ? "Soul AI" : "You"}
+                    {details.type === "AI" ? "Soul AI" : "You"}
                 </Typography>
                 <Typography fontSize={{ xs: 12, md: 16 }}>
                     {details.text}
@@ -71,10 +74,10 @@ export default function ChattingCard({
                         fontSize={{ xs: 8, md: 12 }}
                         color={"text.secondary"}
                     >
-                        {format(details.time, "hh:mm a")}
+                        {messageDate ? format(messageDate, "hh:mm a") : "--:--"}
                     </Typography>
 
-                    {details.type == "AI" && !readOnly && (
+                    {details.type === "AI" && !readOnly && (
                         <Stack
                             direction={"row"}
                             visibility={{ xs: "visible", md: "hidden" }}
@@ -108,14 +111,14 @@ export default function ChattingCard({
                     )}
                 </Stack>
 
-                {(isRating || details.rating > 0) && details.type == "AI" && (
+                {(isRating || details.rating > 0) && details.type === "AI" && (
                     <Box pt={{ xs: 1, md: 2 }}>
                         <Typography
                             component={"legend"}
                             fontSize={{ xs: 10, md: 12 }}
                             mb={0.5}
                         >
-                            {readOnly ? "Rating:" : "Rate this reponse:"}
+                            {readOnly ? "Rating:" : "Rate this response:"}
                         </Typography>
                         <Rating
                             name="simple-controlled"
